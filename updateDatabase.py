@@ -10,7 +10,7 @@ from database.client import createSupabaseClient
 from stocks.parse_price_frame import parsePriceFrame
 from track_records import TrackRecord
 # main
-if __name__ == "__main__":
+def update():
     config = dotenv_values(".env")
     
     supabase: Client = createSupabaseClient(timeout=30, url=config["SUPABASE_URL"], key=config["SUPABASE_SERVICE_KEY"])
