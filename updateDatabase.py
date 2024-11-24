@@ -42,3 +42,6 @@ def update():
             continue
         
         record.updateRecord([id,])
+        
+if __name__ == "__main__":
+    update()
