@@ -11,7 +11,10 @@ def job():
         print(f"Error occurred during update: {e}")
     return
 
-schedule.every().day.at("01:00").do(job)
+
+currennt_time = time.strftime(time.localtime())
+
+schedule.every().day.at(currennt_time).do(job)
 
 while True:
     schedule.run_pending()
