@@ -1,0 +1,7 @@
+2024-11-25 18:09:32 - ERROR - Exception ignored in:
+2024-11-25 18:09:32 - ERROR - <module 'threading' from '/nix/store/901c80rlps5q05bnjk1sj4zaz5k736nc-python3-3.12.7/lib/python3.12/threading.py'>
+2024-11-25 18:09:32 - ERROR - Traceback (most recent call last):
+2024-11-25 18:09:32 - ERROR - File "/nix/store/901c80rlps5q05bnjk1sj4zaz5k736nc-python3-3.12.7/lib/python3.12/threading.py", line 1624, in _shutdown
+2024-11-25 18:09:32 - ERROR - lock.acquire()
+2024-11-25 18:09:32 - ERROR - KeyboardInterrupt
+2024-11-25 18:09:32 - ERROR - :
