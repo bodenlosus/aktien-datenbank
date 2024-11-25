@@ -3,3 +3,4 @@
 .vscode
 .direnv
 __pycache__
+logs/*
