@@ -1,29 +1,42 @@
 {
-  description = "A Nix-flake-based Python development environment";
+  description = "A multi-system Python application using Nix Flakes and flake-utils";
 
-  inputs.nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs";
+    flake-utils.url = "github:numtide/flake-utils";
+  };
 
-  outputs = { self, nixpkgs }:
-    let
-      supportedSystems = [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ];
-      forEachSupportedSystem = f: nixpkgs.lib.genAttrs supportedSystems (system: f {
+  outputs = { self, nixpkgs, flake-utils }:
+    flake-utils.lib.eachDefaultSystem (system:
+      let
         pkgs = import nixpkgs { inherit system; };
-      });
-    in
-    {
-      devShells = forEachSupportedSystem ({ pkgs }: {
-        default = pkgs.mkShell {
-          venvDir = ".venv";
-          packages = with pkgs; [ python312 ] ++
-            (with pkgs.python312Packages; [
-              pip
-              venvShellHook
-              numpy
-              yfinance
-              python-dotenv
-              schedule
-            ]);
+      in {
+        packages.default = pkgs.python312Packages.buildPythonApplication rec {
+          pname = "aktien-datenbank";
+          version = "1.0";
+
+          # Python application source
+          src = ./.;
+
+          # Add runtime dependencies
+          propagatedBuildInputs = with pkgs.python312Packages; [
+            numpy
+            yfinance
+            python-dotenv
+            schedule
+          ];
+
+          # Specify the main script or entry point
+          # entryPoints = {
+          #   aktien-datenbank = "main:main"; # Ensure 'main.py' has a 'main()' function
+          # };
+
+          # Optional: metadata for the package
+          meta = with pkgs.lib; {
+            description = "A Python app that tracks stock data.";
+            license = licenses.mit;
+            maintainers = [ maintainers.yourname ];
+          };
         };
       });
-    };
 }
