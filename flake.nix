@@ -8,6 +8,7 @@
         pkgs = import nixpkgs { inherit system; };
         python3 = pkgs.python3;
         supafunc = pkgs.python3.pkgs.callPackage ./packages/supafunc.nix {};
+        realtime = pkgs.python3.pkgs.callPackage ./packages/realtime.nix {};
 
         pyproject = builtins.fromTOML (builtins.readFile ./pyproject.toml);
 
@@ -22,6 +23,7 @@
           nativeBuildInputs = with python3.pkgs; [ setuptools ];
 
           propagatedBuildInputs = with python3.pkgs; [
+            realtime
             supafunc
             numpy
             pandas
@@ -48,6 +50,7 @@
         devShells.default = pkgs.mkShell {
           venvDir = "./.venv";
           packages = with python3.pkgs; [
+            realtime
             supafunc
             numpy
             pandas

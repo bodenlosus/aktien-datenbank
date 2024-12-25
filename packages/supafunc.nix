@@ -26,7 +26,7 @@
 }:
 
 buildPythonPackage rec {
-  pname = "supafunc";
+  pname = "supabase_functions";
   version = "0.9.0";
   pyproject = true;
 
