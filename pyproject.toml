@@ -6,10 +6,11 @@ build-backend = "setuptools.build_meta"
 name = "aktiendb"
 version = "0.1"
 dependencies = [
-    "numba",
-    "pillow",
-    "numpy",
-    "scikit-learn"
+    "pandas",
+    "yfinance",
+    "supabase",
+    "python-dotenv",
+    "schedule",
 ]
 
 [tool.setuptools]

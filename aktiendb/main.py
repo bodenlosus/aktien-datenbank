@@ -1,5 +1,5 @@
 import sys
-from app.updateDatabase import update
+from aktiendb.updateDatabase import update
 import schedule
 import threading
 import time

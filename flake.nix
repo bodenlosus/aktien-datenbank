@@ -7,6 +7,7 @@
       let
         pkgs = import nixpkgs { inherit system; };
         python3 = pkgs.python3;
+        supafunc = pkgs.python3.pkgs.callPackage ./packages/supafunc.nix {};
 
         pyproject = builtins.fromTOML (builtins.readFile ./pyproject.toml);
 
@@ -21,10 +22,12 @@
           nativeBuildInputs = with python3.pkgs; [ setuptools ];
 
           propagatedBuildInputs = with python3.pkgs; [
-            numba
-            pillow
+            supafunc
             numpy
-            scikit-learn
+            pandas
+            yfinance
+            python-dotenv
+            schedule
           ];
         };
 
@@ -45,10 +48,12 @@
         devShells.default = pkgs.mkShell {
           venvDir = "./.venv";
           packages = with python3.pkgs; [
-            numba
-            pillow
+            supafunc
             numpy
-            scikit-learn
+            pandas
+            yfinance
+            python-dotenv
+            schedule
             venvShellHook
           ];
         };

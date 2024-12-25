@@ -4,11 +4,11 @@ from supabase import Client
 import yfinance as yf
 import numpy as np
 import pathlib
-from app.database.insert_prices import bulkInsertPrice
-from app.database.stock_info import getStockInfo
-from app.database.client import createSupabaseClient
-from app.stocks.parse_price_frame import parsePriceFrame
-from app.track_records import TrackRecord
+from aktiendb.database.insert_prices import bulkInsertPrice
+from aktiendb.database.stock_info import getStockInfo
+from aktiendb.database.client import createSupabaseClient
+from aktiendb.stocks.parse_price_frame import parsePriceFrame
+from aktiendb.track_records import TrackRecord
 # main
 def update():
     config = dotenv_values(".env")
