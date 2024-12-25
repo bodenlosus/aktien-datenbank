@@ -1,6 +1,0 @@
-numpy
-supabase
-pandas
-yfinance
-python-dotenv
-schedule

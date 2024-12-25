@@ -1,6 +1,0 @@
-2024-11-25 21:18:26 - INFO - HTTP Request: POST https://ibwaxbmvshovpenseudo.supabase.co/rest/v1/rpc/paginate_stock_symbols "HTTP/2 200 OK"
-2024-11-25 21:18:26 - INFO - HTTP Request: POST https://ibwaxbmvshovpenseudo.supabase.co/rest/v1/rpc/upsert_stock_prices_bulk "HTTP/2 204 No Content"
-2024-11-25 21:18:27 - INFO - HTTP Request: POST https://ibwaxbmvshovpenseudo.supabase.co/rest/v1/rpc/upsert_stock_prices_bulk "HTTP/2 204 No Content"
-2024-11-25 21:18:28 - INFO - HTTP Request: POST https://ibwaxbmvshovpenseudo.supabase.co/rest/v1/rpc/upsert_stock_prices_bulk "HTTP/2 204 No Content"
-2024-11-25 21:18:28 - INFO - HTTP Request: POST https://ibwaxbmvshovpenseudo.supabase.co/rest/v1/rpc/upsert_stock_prices_bulk "HTTP/2 204 No Content"
-2024-11-25 21:18:29 - INFO - HTTP Request: POST https://ibwaxbmvshovpenseudo.supabase.co/rest/v1/rpc/upsert_stock_prices_bulk "HTTP/2 204 No Content"
