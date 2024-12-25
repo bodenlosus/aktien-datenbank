@@ -20,7 +20,7 @@
 , pytest-cov
 , commitizen
 , python-dotenv
-, unasync-cli
+# , unasync-cli
 , pytest-asyncio
 }:
 

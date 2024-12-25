@@ -9,6 +9,8 @@
         python3 = pkgs.python3;
         supafunc = pkgs.python3.pkgs.callPackage ./packages/supafunc.nix {};
         realtime = pkgs.python3.pkgs.callPackage ./packages/realtime.nix {};
+        storage3 = pkgs.python3.pkgs.callPackage ./packages/storag3.nix {};
+        supabase  = pkgs.python3.pkgs.callPackage ./packages/supabase.nix {inherit realtime supafunc storage3;};
 
         pyproject = builtins.fromTOML (builtins.readFile ./pyproject.toml);
 
@@ -23,6 +25,7 @@
           nativeBuildInputs = with python3.pkgs; [ setuptools ];
 
           propagatedBuildInputs = with python3.pkgs; [
+            supabase
             realtime
             supafunc
             numpy
@@ -50,6 +53,7 @@
         devShells.default = pkgs.mkShell {
           venvDir = "./.venv";
           packages = with python3.pkgs; [
+            supabase
             realtime
             supafunc
             numpy
