@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aktiendatenbank"
+version = "0.0.1"
+requires-python = ">=3.12"
+dependencies = [
+    "numpy",
+    "supabase",
+    "pandas",
+    "yfinance",
+    "python-dotenv",
+    "schedule",
+]
+
+[tool.poetry.scripts]
+aktiendb = 'aktiendatenbank.main:main'
+
+
+[tool.setuptools.packages.find]
+where = ["src"]  # list of folders that contain the packages (["."] by default)
+include = ["aktiendatenbank"]

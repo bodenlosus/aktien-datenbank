@@ -1,42 +1,66 @@
 {
-  description = "A multi-system Python application using Nix Flakes and flake-utils";
+  description = "Application packaged using poetry2nix";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs";
     flake-utils.url = "github:numtide/flake-utils";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable-small";
+    poetry2nix = {
+      url = "github:nix-community/poetry2nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-utils.follows = "flake-utils";
+    };
   };
 
-  outputs = { self, nixpkgs, flake-utils }:
+  outputs = { self, nixpkgs, flake-utils, poetry2nix }:
     flake-utils.lib.eachDefaultSystem (system:
       let
-        pkgs = import nixpkgs { inherit system; };
-      in {
-        packages.default = pkgs.python312Packages.buildPythonApplication rec {
-          pname = "aktien-datenbank";
-          version = "1.0";
-
-          # Python application source
-          src = ./.;
-
-          # Add runtime dependencies
-          propagatedBuildInputs = with pkgs.python312Packages; [
-            numpy
-            yfinance
-            python-dotenv
-            schedule
+        # see https://github.com/nix-community/poetry2nix/tree/master#api for more functions and examples.
+        aktiendatenbank = { poetry2nix, lib }: poetry2nix.mkPoetryApplication {
+          projectDir = self;
+          overrides = poetry2nix.overrides.withDefaults (final: super:
+            lib.mapAttrs
+              (attr: systems: super.${attr}.overridePythonAttrs
+                (old: {
+                  nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ map (a: final.${a}) systems;
+                }))
+              {
+                # https://github.com/nix-community/poetry2nix/blob/master/docs/edgecases.md#modulenotfounderror-no-module-named-packagename
+                # package = [ "setuptools" ];
+              }
+          );
+        };
+        pkgs = import nixpkgs {
+          inherit system;
+          overlays = [
+            poetry2nix.overlays.default
+            (final: _: {
+              aktiendatenbank = final.callPackage aktiendatenbank { };
+            })
           ];
+        };
+      in
+      {
+        packages.default = pkgs.aktiendatenbank;
+        devShells = {
+          # Shell for app dependencies.
+          #
+          #     nix develop
+          #
+          # Use this shell for developing your app.
+          default = pkgs.mkShell {
+            inputsFrom = [ pkgs.aktiendatenbank ];
+          };
 
-          # Specify the main script or entry point
-          # entryPoints = {
-          #   aktien-datenbank = "main:main"; # Ensure 'main.py' has a 'main()' function
-          # };
-
-          # Optional: metadata for the package
-          meta = with pkgs.lib; {
-            description = "A Python app that tracks stock data.";
-            license = licenses.mit;
-            maintainers = [ maintainers.yourname ];
+          # Shell for poetry.
+          #
+          #     nix develop .#poetry
+          #
+          # Use this shell for changes to pyproject.toml and poetry.lock.
+          poetry = pkgs.mkShell {
+            packages = [ pkgs.poetry ];
           };
         };
-      });
+        legacyPackages = pkgs;
+      }
+    );
 }
