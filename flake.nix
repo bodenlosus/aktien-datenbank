@@ -9,8 +9,10 @@
         python3 = pkgs.python3;
         supafunc = pkgs.python3.pkgs.callPackage ./packages/supafunc.nix {};
         realtime = pkgs.python3.pkgs.callPackage ./packages/realtime.nix {};
-        storage3 = pkgs.python3.pkgs.callPackage ./packages/storag3.nix {};
-        supabase  = pkgs.python3.pkgs.callPackage ./packages/supabase.nix {inherit realtime supafunc storage3;};
+        storage3 = pkgs.python3.pkgs.callPackage ./packages/storage3.nix {};
+        gotrue = pkgs.python3.pkgs.callPackage ./packages/gotrue.nix {};
+        postgrest = pkgs.python3.pkgs.callPackage ./packages/postgrest.nix {};
+        supabase  = pkgs.python3.pkgs.callPackage ./packages/supabase.nix {inherit realtime supafunc storage3 gotrue postgrest;};
 
         pyproject = builtins.fromTOML (builtins.readFile ./pyproject.toml);
 

@@ -20,6 +20,7 @@
 , pytest-cov
 , commitizen
 , python-dotenv
+, h2
 # , unasync-cli
 , pytest-asyncio
 }:
@@ -35,7 +36,7 @@ buildPythonPackage rec {
     owner = "supabase";
     repo = "supabase-py";
     rev = "v${version}";
-    hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="; # Replace with actual hash
+    hash = "sha256-FcRIBDD9tu/EdWbGIIfExOZgu611JI1O0cmPvpYDHJY="; # Replace with actual hash
   };
 
   nativeBuildInputs = [
@@ -47,6 +48,7 @@ buildPythonPackage rec {
     realtime
     gotrue
     httpx
+    h2
     storage3
     supafunc
   ];

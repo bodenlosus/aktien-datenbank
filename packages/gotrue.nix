@@ -6,34 +6,35 @@
 , poetry-core
 # runtime dependencies
 , httpx
-, python-dateutil
+, pydantic
 # dev dependencies
+, pytest
+, flake8
 , black
 , isort
 , pre-commit
-, pytest
-, pytest-asyncio
 , pytest-cov
-, python-dotenv
-, h2
-# , sphinx
-# , sphinx-press-theme
-# , sphinx-toolbox
+, pytest-depends
+, pytest-asyncio
+, faker
 # , unasync-cli
+, pygithub
+, respx
+, h2
 }:
 
 buildPythonPackage rec {
-  pname = "storage3";
-  version = "0.9.0";
+  pname = "supabase_auth";
+  version = "2.11.0";
   format = "pyproject";
 
   disabled = pythonOlder "3.9";
 
   src = fetchFromGitHub {
     owner = "supabase";
-    repo = "storage-py";
+    repo = "auth-py";
     rev = "v${version}";
-    hash = "sha256-Q/hE7ua7BzB/YbVAT5Ov25n9u91xQ7SBw5ikh1FXrU0="; # Replace with actual hash
+    hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="; # Replace with actual hash
   };
 
   nativeBuildInputs = [
@@ -43,27 +44,26 @@ buildPythonPackage rec {
   propagatedBuildInputs = [
     httpx
     h2
-    python-dateutil
+    pydantic
   ];
 
   nativeCheckInputs = [
+    pytest
+    flake8
     black
     isort
     pre-commit
-    pytest
-    pytest-asyncio
     pytest-cov
-    python-dotenv
-    # sphinx
-    # sphinx-press-theme
-    # sphinx-toolbox
-    # unasync-cli
+    pytest-depends
+    pytest-asyncio
+    faker
+    unasync-cli
+    pygithub
+    respx
   ];
 
-  # Handle dependency version constraints
-
   pythonImportsCheck = [
-    "storage3"
+    "supabase_auth"
   ];
 
   doCheck = false;
@@ -72,9 +72,9 @@ buildPythonPackage rec {
   pytestFlagsArray = [ "--asyncio-mode=auto" ];
 
   meta = with lib; {
-    description = "Supabase Storage client for Python";
-    homepage = "https://supabase.github.io/storage-py";
-    documentation = "https://supabase.github.io/storage-py";
+    description = "Python Client Library for Supabase Auth";
+    homepage = "https://github.com/supabase/auth-py";
+    documentation = "https://github.com/supabase/auth-py";
     license = licenses.mit;
     maintainers = with maintainers; [ ]; # Add maintainers as needed
     classifiers = [
