@@ -1,23 +1,18 @@
-[tool.poetry]
-name = "aktiendatenbank"
-version = "0.1.0"
-description = ""
-authors = ["bodenlosus <johannes.till.schmidt@outlook.de>"]
-license = "MIT"
-readme = "README.md"
-
-[tool.poetry.dependencies]
-python = "^3.12"
-supabase = "^2.10.0"
-numpy = "^2.2.1"
-pandas = "^2.2.3"
-yfinance = "^0.2.51"
-python-dotenv = "^1.0.1"
-schedule = "^1.2.2"
-
-[tool.poetry.scripts]
-aktiendb = 'aktiendatenbank.main:main'
-
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aktiendb"
+version = "0.1"
+dependencies = [
+    "numba",
+    "pillow",
+    "numpy",
+    "scikit-learn"
+]
+
+[tool.setuptools]
+packages = ["palettify",]
+[project.scripts]
+palettify = "app.updateDatabase:update"
