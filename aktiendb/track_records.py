@@ -38,7 +38,13 @@ class TrackRecord:
             daysSinceUpdate = int(np.ceil(timeSinceUpdate))
 
             return daysSinceUpdate
-        
+    
+    def getLastUpdateTimestamp(self, id) -> str:
+        timestamp = self.record[id]
+    
+    def getCurrentDate(self):
+        currentTime = time.strftime("%Y-%m-%d", time.gmtime())
+        return currentTime
 
     def getUpdatePeriod(self, id) -> str:
         possibleIntervals = {
