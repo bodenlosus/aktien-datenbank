@@ -23,4 +23,4 @@ jobs:
 
       - name: Update hashes and test build
         run: |
-          python3 .github/update.py
+          nix shell . --command aktiendb-update
