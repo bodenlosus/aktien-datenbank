@@ -1,3 +1,4 @@
+import os
 from dotenv import dotenv_values
 from supabase import Client
 import yfinance as yf
@@ -10,10 +11,20 @@ from .database.client import createSupabaseClient
 from .stocks.parse_price_frame import parsePriceFrame
 from .track_records import TrackRecord
 
+
+
 def update():
     config = dotenv_values(".env")
     
-    supabase: Client = createSupabaseClient(timeout=30, url=config["SUPABASE_URL"], key=config["SUPABASE_SERVICE_KEY"])
+    url = config.get("SUPABASE_URL")
+    key = config.get("SUPABASE_SERVICE_KEY")
+    
+    if not url:
+        url = os.getenv("SUPABASE_URL")
+    if not key:
+        key = os.getenv("SUPABASE_SERVICE_KEY")
+    
+    supabase: Client = createSupabaseClient(timeout=30, url=url, key=key)
     
     stockInfos = getStockInfo(supabase, keys=("id", "symbol"))
     
