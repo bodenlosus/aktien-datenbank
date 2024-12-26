@@ -13,8 +13,10 @@ from .stocks.parse_price_frame import parsePriceFrame
 from .track_records import TrackRecord
 import queue
 import threading
+import time
 
 def update():
+    
     config = dotenv_values(".env")
     url = config.get("SUPABASE_URL")
     key = config.get("SUPABASE_SERVICE_KEY")
@@ -41,6 +43,8 @@ def update():
     worker = threading.Thread(target=uploader, args=(q, supabase, 1500))
     worker.start()
     
+    t0 = time.time()
+    
     for id, symbol in stockInfos:
         print(f"Aktie {id}: {symbol}")
         # Stellt panda-Dataframe mit den relevanten Werten zur Verfügung
@@ -65,6 +69,9 @@ def update():
     q.put((None, None))
     
     worker.join()
+    
+    t1 = time.time()
+    print(f"Update finished. Time needed: {t1-t0}s")
         
 if __name__ == "__main__":
     update()
