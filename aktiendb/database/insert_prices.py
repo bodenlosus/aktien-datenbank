@@ -22,7 +22,7 @@ def uploader(q: queue.Queue, supabase: Client, chunKSize=500):
 
         if priceCount >= chunKSize:
             priceChain = chain(*pricesGens[:])
-            response = bulkInsertPrice(supabase, priceChain, chunk_size=500)
+            response = bulkInsertPrice(supabase, priceChain, chunk_size=chunKSize)
             
             if isinstance(response, Exception):
                 print(f"Error inserting data")

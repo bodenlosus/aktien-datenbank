@@ -38,7 +38,7 @@ def update():
 
     q = queue.Queue()
     
-    worker = threading.Thread(target=uploader, args=(q, supabase, 600))
+    worker = threading.Thread(target=uploader, args=(q, supabase, 1500))
     worker.start()
     
     for id, symbol in stockInfos:
