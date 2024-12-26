@@ -4,4 +4,3 @@
 .direnv
 __pycache__
 logs/*
-*.dat
