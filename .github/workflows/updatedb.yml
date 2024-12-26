@@ -25,5 +25,6 @@ jobs:
         env:
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-        run: |
+        run:
+          echo $SUPABASE_SERVICE_KEY
           nix shell . --command aktiendb-update
