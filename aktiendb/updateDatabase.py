@@ -23,7 +23,8 @@ def update():
         url = sys.argv[1]
     if not key:
         key = sys.argv[2]
-        print(key)
+
+    print(url, key)
     
     supabase: Client = createSupabaseClient(timeout=30, url=url, key=key)
     

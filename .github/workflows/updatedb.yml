@@ -9,6 +9,7 @@ jobs:
   update-zen-browser:
     name: Update Database
     runs-on: ubuntu-latest
+    environment: updateEnv
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
