@@ -6,13 +6,13 @@ import yfinance as yf
 import math
 import numpy as np
 import pathlib
-from .database.insert_prices import bulkInsertPrice
+from .database.insert_prices import bulkInsertPrice, uploader
 from .database.stock_info import getStockInfo
 from .database.client import createSupabaseClient
 from .stocks.parse_price_frame import parsePriceFrame
 from .track_records import TrackRecord
-
-
+import queue
+import threading
 
 def update():
     config = dotenv_values(".env")
@@ -36,6 +36,11 @@ def update():
     record = TrackRecord(record_file)
     record.readRecord()
 
+    q = queue.Queue()
+    
+    worker = threading.Thread(target=uploader, args=(q, supabase, 600))
+    worker.start()
+    
     for id, symbol in stockInfos:
         print(f"Aktie {id}: {symbol}")
         # Stellt panda-Dataframe mit den relevanten Werten zur Verfügung
@@ -50,14 +55,16 @@ def update():
             print(f"Fehler beim Abrufen von Daten für {symbol}: {e}")
             continue
         
-        # DataFrame-Werte in normale arrays schreiben
-        response = bulkInsertPrice(supabase, parsePriceFrame(el, id), chunk_size=500)
+        count = len(el)
+        prices = parsePriceFrame(el, id)
         
-        if isinstance(response, Exception):
-            print(f"Error inserting data for {symbol}: {response}")
-            continue
+        q.put((prices, count))
         
         record.updateRecord([id,])
+    
+    q.put((None, None))
+    
+    worker.join()
         
 if __name__ == "__main__":
     update()
