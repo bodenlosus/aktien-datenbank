@@ -1,4 +1,5 @@
 import os
+import sys
 from dotenv import dotenv_values
 from supabase import Client
 import yfinance as yf
@@ -15,14 +16,14 @@ from .track_records import TrackRecord
 
 def update():
     config = dotenv_values(".env")
-    
     url = config.get("SUPABASE_URL")
     key = config.get("SUPABASE_SERVICE_KEY")
     
     if not url:
-        url = os.getenv("SUPABASE_URL")
+        url = sys.argv[1]
     if not key:
-        key = os.getenv("SUPABASE_SERVICE_KEY")
+        key = sys.argv[2]
+        print(key)
     
     supabase: Client = createSupabaseClient(timeout=30, url=url, key=key)
     
