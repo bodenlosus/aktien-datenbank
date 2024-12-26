@@ -1,5 +1,5 @@
 import numpy as np
-from app.utils.np_to_native import npDTypeToNative
+from ..utils.np_to_native import npDTypeToNative
 
 
 def parsePriceFrame(el, stockID):
