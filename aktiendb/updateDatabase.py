@@ -1,22 +1,16 @@
-import os
 import sys
 from .download import downloadStocks
 from dotenv import dotenv_values
 from supabase import Client
 import yfinance as yf
-import math
-import numpy as np
 import pathlib
-from .database.insert_prices import bulkInsertPrice, uploader
+from .database.insert_prices import uploader
 from .database.stock_info import getStockInfo
 from .database.client import createSupabaseClient
-from .stocks.parse_price_frame import parsePriceFrame
 from .track_records import TrackRecord
 import queue
 import threading
-import time
 
-from itertools import batched
 
 def getStocks(stockInfos) -> dict[str, int]:
     stocks = {symbol.upper():id for id, symbol in stockInfos}
