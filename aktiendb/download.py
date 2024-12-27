@@ -10,7 +10,7 @@ def getID(stocks, symbol:str ) -> int:
         raise ValueError(f"No stock found for {symbol}")
 
     return id
-def downloadStocks(stocks: dict[str, str], start:str, end:str, period="1y") -> DataFrame:
+def downloadStocks(stocks: dict[str, str], start:str=None, end:str=None, period="1y") -> DataFrame:
     symbols = " ".join(stocks.keys())
     tickers = yf.Tickers(symbols)
     dataframe = (tickers.history(period=period, start=start, end=end)

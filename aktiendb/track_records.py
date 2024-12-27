@@ -47,7 +47,7 @@ class TrackRecord:
         timestamp = self.getLastUpdateTimestamp(maxID)
         period = self.getUpdatePeriod(maxID)
         
-        return period, timestamp
+        return timestamp, period
     
     def getCurrentDate(self):
         currentTime = time.strftime("%Y-%m-%d", time.gmtime())
