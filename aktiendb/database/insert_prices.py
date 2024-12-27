@@ -23,11 +23,11 @@ def uploader(q: queue.Queue, supabase: Client, chunKSize=500):
         if priceCount >= chunKSize:
             response = bulkInsertPrice(supabase, prices, chunk_size=chunKSize)
             
-            if isinstance(response, Exception):
-                print(f"Error inserting data")
-            
             prices = []
             priceCount = 0
+            
+            if isinstance(response, Exception):
+                print(f"Error inserting data")
             
     if priceCount > 0:
         response = bulkInsertPrice(supabase, prices, chunk_size=500)
@@ -55,7 +55,6 @@ def bulkInsertPrice(
             ).execute()
         except postgrest.exceptions.APIError as e:
             print(*bulk, sep="\n", file=sys.stderr)
-            raise(e)
         except Exception as e:
             print(f"Failed to insert data: {e}")
         print(f"Inserted {len(bulk)} rows.")
