@@ -19,7 +19,7 @@ def getStockInfo(supabase: Client, keys: tuple[str]) -> Generator[str, None, Non
             raise e
 
         for row in response.data:
-            yield (row[key] for key in keys)
+            yield [row[key] for key in keys]
 
         chunk_number += 1
 

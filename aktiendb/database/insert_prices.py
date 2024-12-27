@@ -1,4 +1,4 @@
-from itertools import chain
+from itertools import batched, chain
 import sys
 import time
 from typing import Generator
@@ -8,31 +8,29 @@ import queue
 import threading
 
 def uploader(q: queue.Queue, supabase: Client, chunKSize=500):
-    pricesGens = []
+    prices = []
     priceCount = 0
     while True:
-        gen, amount = q.get()
+        frame, amount = q.get()
         
-        if gen is None:
+        if frame is None:
             break
         
         priceCount += amount
         
-        pricesGens.append(gen)
+        prices.extend(frame.to_dict(orient="records"))
 
         if priceCount >= chunKSize:
-            priceChain = chain(*pricesGens[:])
-            response = bulkInsertPrice(supabase, priceChain, chunk_size=chunKSize)
+            response = bulkInsertPrice(supabase, prices, chunk_size=chunKSize)
             
             if isinstance(response, Exception):
                 print(f"Error inserting data")
             
-            pricesGens = []
+            prices = []
             priceCount = 0
             
-    if priceCount > chunKSize:
-        priceChain = chain(*pricesGens[:])
-        response = bulkInsertPrice(supabase, priceChain, chunk_size=500)
+    if priceCount > 0:
+        response = bulkInsertPrice(supabase, prices, chunk_size=500)
             
         if isinstance(response, Exception):
             print(f"Error inserting data")
@@ -48,20 +46,8 @@ def bulkInsertPrice(
     prices: list[dict[str, str | float | int]],
     chunk_size: int = 500,
 ):
-    inserted_count = 0
-
-    price = next(prices, None)
     # Bulk in chunks
-    while price is not None:
-        bulk = []
-        for i in range(chunk_size):
-
-            bulk.append(price)
-            price = next(prices, None)
-            inserted_count += 1
-            if price is None:
-                break
-        
+    for bulk in batched(prices, chunk_size): 
         try:
             response = supabase.rpc(
                 "upsert_stock_prices_bulk",
@@ -69,9 +55,10 @@ def bulkInsertPrice(
             ).execute()
         except postgrest.exceptions.APIError as e:
             print(*bulk, sep="\n", file=sys.stderr)
+            raise(e)
         except Exception as e:
             print(f"Failed to insert data: {e}")
-        print(f"Inserted {inserted_count} rows.")
+        print(f"Inserted {len(bulk)} rows.")
         time.sleep(.5)
     print("inserted.")
         
