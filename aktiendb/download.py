@@ -1,15 +1,6 @@
 from pandas import DataFrame
 import yfinance as yf
 
-def getID(stocks, symbol:str ) -> int:
-    id = stocks.get(symbol.upper(), -1)
-    
-    if id == -1:
-        print(stocks)
-        print(symbol)
-        raise ValueError(f"No stock found for {symbol}")
-
-    return id
 def downloadStocks(symbol, id, start:str=None, end:str=None, period="1y") -> DataFrame:
     ticker = yf.Ticker(symbol)
     dataframe = (ticker.history(period=period, start=start, end=end)
@@ -18,7 +9,7 @@ def downloadStocks(symbol, id, start:str=None, end:str=None, period="1y") -> Dat
                  )
     
     if dataframe.empty:
-        print("No data found for the given period")
+        print(f"No data found: period={period}, Stock={symbol} with ID={id}")
         return dataframe
     
     columnsToKeep = ["Date", "Ticker", "Close", "High", "Low", "Open", "Volume"]
