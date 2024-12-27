@@ -1,5 +1,6 @@
 import os
 import sys
+from .download import downloadStocks
 from dotenv import dotenv_values
 from supabase import Client
 import yfinance as yf
@@ -15,8 +16,51 @@ import queue
 import threading
 import time
 
+from itertools import batched
+
+def getStocks(stockInfos) -> dict[str, int]:
+    stocks = {symbol.upper():id for id, symbol in stockInfos}
+    return stocks
+
 def update():
+    url, key = getSecrets()
     
+    supabase: Client = createSupabaseClient(timeout=30, url=url, key=key)
+    
+    stockInfos = getStockInfo(supabase, keys=("id", "symbol"))
+    
+    q = queue.Queue()
+    
+    worker = threading.Thread(target=uploader, args=(q, supabase, 1500))
+    worker.start()
+    
+    record_file = pathlib.Path("./record.dat")
+    record_file.touch(exist_ok=True)
+    
+    record = TrackRecord(record_file)
+    record.readRecord()
+    
+    for chunk in batched(stockInfos, 10):
+        stocks = getStocks(chunk)
+        print("Downloading stock data for", end="")
+        for symbol in stocks.keys():
+            print(f", {symbol}", end=" ")
+        print("\n")
+        
+        start, period = record.getMaxUpdateData(stocks.values())
+        end = record.getCurrentDate()
+        print(start, period)
+        dataframe = downloadStocks(stocks=stocks, start=start, end=end, period=period)
+        if dataframe.empty:
+            continue
+        
+        q.put((dataframe, dataframe.shape[0]))
+    
+    q.put((None, None))
+    
+    worker.join()
+
+def getSecrets():
     config = dotenv_values(".env")
     url = config.get("SUPABASE_URL")
     key = config.get("SUPABASE_SERVICE_KEY")
@@ -26,52 +70,7 @@ def update():
     if not key:
         key = sys.argv[2]
 
-    print(url, key)
-    
-    supabase: Client = createSupabaseClient(timeout=30, url=url, key=key)
-    
-    stockInfos = getStockInfo(supabase, keys=("id", "symbol"))
-    
-    record_file = pathlib.Path("./record.dat")
-    record_file.touch(exist_ok=True)
-    
-    record = TrackRecord(record_file)
-    record.readRecord()
+    return(url, key)
 
-    q = queue.Queue()
-    
-    worker = threading.Thread(target=uploader, args=(q, supabase, 1500))
-    worker.start()
-    
-    t0 = time.time()
-    
-    for id, symbol in stockInfos:
-        print(f"Aktie {id}: {symbol}")
-        # Stellt panda-Dataframe mit den relevanten Werten zur Verfügung
-       
-        try:
-            msft = yf.Ticker(symbol)
-            el = msft.history(period=record.getUpdatePeriod(id))
-        except ValueError:
-            print("Keine Daten vorhanden für ", symbol)
-            continue
-        except Exception as e:
-            print(f"Fehler beim Abrufen von Daten für {symbol}: {e}")
-            continue
-        
-        count = len(el)
-        prices = parsePriceFrame(el, id)
-        
-        q.put((prices, count))
-        
-        record.updateRecord([id,])
-    
-    q.put((None, None))
-    
-    worker.join()
-    
-    t1 = time.time()
-    print(f"Update finished. Time needed: {t1-t0}s")
-        
 if __name__ == "__main__":
     update()
