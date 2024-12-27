@@ -24,4 +24,7 @@ jobs:
         pip install .
 
     - name: Update database
-      run: aktiendb-update
+      env:
+        SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      run: aktiendb-update $SUPABASE_URL $SUPABASE_SERVICE_KEY
