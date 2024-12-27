@@ -18,3 +18,4 @@ packages = ["aktiendb", "aktiendb.database"]
 
 [project.scripts]
 aktiendb-update = "aktiendb:updateDatabase.update"
+aktiendb-daemon = "aktiendb:main.main"

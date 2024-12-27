@@ -35,6 +35,10 @@ def updateService():
         time.sleep(60)
 
 def main():
+    updateTime = "01:00"
+    
+    print(sys.argv)
+    
     sys.stdout = StreamToLogger(logger, logging.INFO)
     sys.stderr = StreamToLogger(logger, logging.ERROR)
     
@@ -51,7 +55,7 @@ def main():
     
     service = threading.Thread(target=updateService)
     service.start()
-    schedule.every().day.at("18:11").do(job)
+    schedule.every().day.at("01:00").do(job)
     schedule.run_all()
     service.join()
 
