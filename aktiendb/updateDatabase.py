@@ -1,4 +1,5 @@
 import sys
+import time
 from .download import downloadStocks
 from dotenv import dotenv_values
 from supabase import Client
@@ -40,6 +41,7 @@ def update():
         period = record.getUpdatePeriod(id)
 
         dataframe = downloadStocks(symbol=symbol, id=id, period=period)
+        time.sleep(0.1)
         if dataframe.empty:
             continue
         

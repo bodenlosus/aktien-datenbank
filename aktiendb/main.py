@@ -22,28 +22,12 @@ class StreamToLogger:
         pass  # Required for file-like object, no-op here
 
 def job():
-    print("updating database")
-    try:
-        update()
-    except Exception as e:
-        logger.exception(f"Error updating database: {e}")
-    return
-
-def updateService():
-    while True:
-        schedule.run_pending()
-        time.sleep(60)
-
-def main():
-    updateTime = "01:00"
-    
-    print(sys.argv)
-    
     sys.stdout = StreamToLogger(logger, logging.INFO)
     sys.stderr = StreamToLogger(logger, logging.ERROR)
     
     current_datetime = time.strftime("%Y-%m-%dT%H:%M:%S")
-    log_file = pathlib.Path(f"./log/{current_datetime}.log")
+    log_file = pathlib.Path(f".cache/aktiendb/log/{current_datetime}.log")
+    log_file.parent.mkdir(parents=True, exist_ok=True)  
     log_file.touch(exist_ok=True)
     
     logging.basicConfig(
@@ -53,11 +37,29 @@ def main():
         datefmt='%Y-%m-%d %H:%M:%S'  # Define the timestamp format
     )
     
-    service = threading.Thread(target=updateService)
-    service.start()
-    schedule.every().day.at("01:00").do(job)
-    schedule.run_all()
-    service.join()
+    print("updating database")
+    try:
+        update()
+    except Exception as e:
+        logger.exception(f"Error updating database: {e}")
+    return
+    
+
+def main():
+    updateTime = "01:00"
+    
+    if len(sys.argv) > 1:
+        updateTime = sys.argv[1]
+    
+    
+    
+    schedule.every().day.at(updateTime).do(job)
+    
+    while True:
+        print("checking for jobs...")
+        schedule.run_pending()
+    
+        time.sleep(60)
 
 if __name__ == "__main__":
     main()
