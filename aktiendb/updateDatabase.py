@@ -40,17 +40,12 @@ def update():
     record = TrackRecord(record_file)
     record.readRecord()
     
-    for chunk in batched(stockInfos, 50):
-        stocks = getStocks(chunk)
-        print("Downloading stock data for", end="")
-        for symbol in stocks.keys():
-            print(f", {symbol}", end=" ")
-        print("\n")
+    for id, symbol in stockInfos:
+        print("Downloading stock data for", symbol, id, sep=" ")
         
-        start, period = record.getMaxUpdateData(stocks.values())
-        end = record.getCurrentDate()
-        print(start, period)
-        dataframe = downloadStocks(stocks=stocks, period=period)
+        period = record.getUpdatePeriod(id)
+
+        dataframe = downloadStocks(symbol=symbol, id=id, period=period)
         if dataframe.empty:
             continue
         
