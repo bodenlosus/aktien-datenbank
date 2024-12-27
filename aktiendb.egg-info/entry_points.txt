@@ -1,0 +1,2 @@
+[console_scripts]
+aktiendb-update = aktiendb:updateDatabase.update
