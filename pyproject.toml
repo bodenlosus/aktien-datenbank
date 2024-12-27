@@ -14,7 +14,7 @@ dependencies = [
 ]
 
 [tool.setuptools]
-packages = ["aktiendb", "aktiendb.stocks", "aktiendb.utils", "aktiendb.database"]
+packages = ["aktiendb", "aktiendb.database"]
 
 [project.scripts]
 aktiendb-update = "aktiendb:updateDatabase.update"

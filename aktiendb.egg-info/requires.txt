@@ -1,0 +1,5 @@
+pandas
+yfinance
+supabase
+python-dotenv
+schedule
