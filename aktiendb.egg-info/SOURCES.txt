@@ -1,0 +1,17 @@
+pyproject.toml
+aktiendb/__init__.py
+aktiendb/download.py
+aktiendb/generateCSV.py
+aktiendb/main.py
+aktiendb/track_records.py
+aktiendb/updateDatabase.py
+aktiendb.egg-info/PKG-INFO
+aktiendb.egg-info/SOURCES.txt
+aktiendb.egg-info/dependency_links.txt
+aktiendb.egg-info/entry_points.txt
+aktiendb.egg-info/requires.txt
+aktiendb.egg-info/top_level.txt
+aktiendb/database/__init__.py
+aktiendb/database/client.py
+aktiendb/database/insert_prices.py
+aktiendb/database/stock_info.py
