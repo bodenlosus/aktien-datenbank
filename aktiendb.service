@@ -1,0 +1,8 @@
+[Unit]
+Description=Fetch and insert data into the database
+
+[Service]
+ExecStart=/home/stefan/.local/bin/aktiendb-update
+WorkingDirectory=/home/stefan/
+StandardOutput=append:/var/log/aktiendb.log
+StandardError=append:/var/log/aktiendb.log
