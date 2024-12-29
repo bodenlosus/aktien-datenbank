@@ -18,7 +18,7 @@
         pname = pyproject.project.name or "unknown-package";
         version = pyproject.project.version or "0.0.0";
 
-        pkg = python3.pkgs.buildPythonPackage rec {
+        pkg = python39.pkgs.buildPythonPackage rec {
           inherit pname version;
           format = "pyproject";
           src = ./.;
