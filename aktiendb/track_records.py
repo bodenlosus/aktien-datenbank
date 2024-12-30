@@ -40,7 +40,10 @@ class TrackRecord:
             return daysSinceUpdate
     
     def getLastUpdateTimestamp(self, id) -> str:
-        timestamp = self.record[id]
+        defaultTimestamp = time.strftime("%Y-%m-%d", time.gmtime(0))
+        timestamp = self.record.get(id, defaultTimestamp)
+        
+        return timestamp
     
     def getMaxUpdateData(self, ids: list[int]) -> str:
         maxID = max(ids, key=lambda id: self.getDaysSinceLastUpdate(self.record[id]))

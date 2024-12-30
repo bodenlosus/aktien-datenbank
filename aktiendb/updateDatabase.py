@@ -1,5 +1,7 @@
 import sys
 import time
+
+from .database.depots import updateDepotValues
 from .download import downloadStocks
 from dotenv import dotenv_values
 from supabase import Client
@@ -22,6 +24,29 @@ def update():
     
     supabase: Client = createSupabaseClient(timeout=30, url=url, key=key)
     
+    updateStocks(supabase)
+    updateDepots(supabase)
+    
+def updateDepots(supabase):
+    dRecord_file = pathlib.Path("./depot_record.dat")
+    dRecord_file.touch(exist_ok=True)
+    
+    dRecord = TrackRecord(dRecord_file)
+    dRecord.readRecord()
+    start = dRecord.getLastUpdateTimestamp(0)[:10]
+    end = dRecord.getCurrentDate()[:10]
+    
+    updateDepotValues(
+        supabase, 
+        start=start, 
+        end=end
+    )
+    
+    dRecord.updateRecord([0,])
+    
+    dRecord.saveRecord()
+
+def updateStocks(supabase):
     stockInfos = getStockInfo(supabase, keys=("id", "symbol"))
     
     q = queue.Queue()
@@ -54,7 +79,6 @@ def update():
     q.put((None, None))
     
     worker.join()
-
 def getSecrets():
     config = dotenv_values(".env")
     url = config.get("SUPABASE_URL")
