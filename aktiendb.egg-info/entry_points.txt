@@ -1,2 +1,3 @@
 [console_scripts]
+aktiendb-daemon = aktiendb:main.main
 aktiendb-update = aktiendb:updateDatabase.update
