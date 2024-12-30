@@ -2,7 +2,10 @@
 Description=Fetch and insert data into the database
 
 [Service]
-ExecStart=/home/stefan/.local/bin/aktiendb-update
-WorkingDirectory=/home/stefan/
+ExecStart=/opt/aktiendb/adb-update
+WorkingDirectory=/opt/aktiendb/
 StandardOutput=append:/var/log/aktiendb.log
 StandardError=append:/var/log/aktiendb.log
+
+[Install]
+WantedBy=multi-user.target
