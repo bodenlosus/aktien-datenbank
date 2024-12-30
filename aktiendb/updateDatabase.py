@@ -46,6 +46,10 @@ def update():
             continue
         
         q.put((dataframe, dataframe.shape[0]))
+        
+        record.updateRecord([id,])
+    
+    record.saveRecord()
     
     q.put((None, None))
     

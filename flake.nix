@@ -10,7 +10,7 @@
     flake-utils.lib.eachSystem [ "x86_64-linux" "aarch64-linux" ] (system:
       let
         pkgs = import nixpkgs { inherit system; };
-        python3 = pkgs.python39;
+        python3 = pkgs.python3;
         supabase = inputs.sb-py.packages.${system}.default;
 
         pyproject = builtins.fromTOML (builtins.readFile ./pyproject.toml);
