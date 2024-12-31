@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Dict, List, Union
 import numpy as np
 from datetime import datetime, timedelta
 import dateutil
@@ -7,55 +7,64 @@ import dateutil
 class TrackRecord:
     def __init__(self, file_path):
         self.file_path = file_path
-        self.record = dict()
+        self.record: Dict[str, datetime] = dict()
         self.dateFormat = "%Y-%m-%d"
 
-    def updateRecord(self, stock_ids: list[int], timestamp:str=None):
-        if not timestamp:
-            today = self
-            date4YearsAgo = today - timedelta(days=365 * 4)
-            timestamp = date4YearsAgo.strftime(self.dateFormat)
+    def defaultDate(self):
+        today = self.getCurrentDate()
+        date4YearsAgo = today - timedelta(days=365 * 4)
+        return date4YearsAgo
+    
+    def updateRecord(self, stock_ids: list[int], datetime:datetime=None):
+        if not datetime:
+            datetime = self.defaultDate()
         
         for id in stock_ids:
-            self.record[id] = timestamp
+            self.record[id] = datetime
 
         self.saveRecord()
 
+    def parseTimestamp(self, timestamp:str):
+        return datetime.strptime(timestamp, self.dateFormat)
+    
+    def toTimestamp(self, datetime: datetime) -> str:
+        return datetime.strftime(self.dateFormat)
+    
     def saveRecord(self):
         with open(self.file_path, "w") as file:
-            file.writelines([f"{id},{time}\n" for id, time in self.record.items()])
+            lines: List[str] = []
+            
+            for id, datetime in self.record.items():
+                timestamp = self.toTimestamp(datetime)
+                lines.append(f"{id},{timestamp}\n")
+                
+            file.writelines(lines)
 
     def readRecord(self) -> dict[int, Union[str, None]]:
         with open(self.file_path, "r") as file:
             recordLines = [line.strip().split(",") for line in file.readlines()]
 
         for id, timestamp in recordLines:
-            self.record[int(id)] = timestamp
+            self.record[int(id)] = self.parseTimestamp(timestamp)
         
         return self.record
 
-    def getDaysSinceLastUpdate(self, timestamp:str) -> int:
-            currentDate = datetime.now()
-            updateDate = datetime.strptime(timestamp, self.dateFormat)
-            
-            diff = currentDate - updateDate
+    def getDaysSinceLastUpdate(self, id:int) -> int:
+            currentDate = self.getCurrentDate()
+            lastDate = self.getDaysSinceLastUpdate(id)
+            diff = currentDate - lastDate
 
             daysSinceUpdate = diff.days
 
             return daysSinceUpdate
     
-    def getLastUpdateTimestamp(self, id) -> str:
-        defaultTimestamp = self.getCurrentDate().strptime
-        timestamp = self.record.get(id, defaultTimestamp)
+    def getLastUpdateDate(self, id) -> str:
         
-        return timestamp
-    
-    def getMaxUpdateData(self, ids: list[int]) -> str:
-        maxID = max(ids, key=lambda id: self.getDaysSinceLastUpdate(self.record[id]))
-        timestamp = self.getLastUpdateTimestamp(maxID)
-        period = self.getUpdatePeriod(maxID)
+        defaultTimestamp = self.defaultDate()
         
-        return timestamp, period
+        dt = self.record.get(id, defaultTimestamp)
+        
+        return dt
     
     def getCurrentDate(self):
         currentDate = datetime.now()
@@ -74,11 +83,9 @@ class TrackRecord:
             366 * 10: "10y",
         }
         if id not in self.record.keys():
-            return "2y"
+            return "5y"
         
-        timestamp = self.record[id]
-        
-        days = self.getDaysSinceLastUpdate(timestamp)
+        days = self.getDaysSinceLastUpdate(id)
         
         for pDays, period in possibleIntervals.items():
             if pDays >= days:

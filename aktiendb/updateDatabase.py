@@ -2,7 +2,7 @@ import sys
 import time
 
 from .database.depots import updateDepotValues
-from .downloadAlphaVantage import download
+from .download import download
 from dotenv import dotenv_values
 from supabase import Client
 import yfinance as yf
@@ -33,13 +33,13 @@ def updateDepots(supabase):
     
     dRecord = TrackRecord(dRecord_file)
     dRecord.readRecord()
-    start = dRecord.getLastUpdateTimestamp(0)[:10]
-    end = dRecord.getCurrentDate()[:10]
+    start = dRecord.getLastUpdateDate(0)
+    end = dRecord.getCurrentDate()
     
     updateDepotValues(
         supabase, 
-        start=start, 
-        end=end
+        start=dRecord.toTimestamp(start), 
+        end=dRecord.toTimestamp(end),
     )
     
     dRecord.updateRecord([0,])
@@ -63,16 +63,21 @@ def updateStocks(supabase):
     for id, symbol in stockInfos:
         print("Downloading stock data for", symbol, id, sep=" ")
         
-        lastUpdate = record.getLastUpdateTimestamp(id)
+        lastUpdate = record.getLastUpdateDate(id)
 
-        dataframe = download(symbol=symbol, id=id, oldest=lastUpdate)
+        dataframe, lastUpdateTS = download(
+            symbol=symbol, 
+            id=id, 
+            start=record.toTimestamp(lastUpdate)
+            )
+        
         time.sleep(0.1)
         if dataframe.empty:
             continue
         
         q.put((dataframe, dataframe.shape[0]))
         
-        record.updateRecord([id,])
+        record.updateRecord([id,], record.parseTimestamp(lastUpdateTS))
     
     record.saveRecord()
     

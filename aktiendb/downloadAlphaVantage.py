@@ -1,7 +1,8 @@
+from typing import Tuple
 from alpha_vantage.timeseries import TimeSeries
 from pandas import DataFrame
 
-def download(symbol, id, oldest:str) -> DataFrame:
+def download(symbol, id, oldest:str) -> Tuple[DataFrame, int]:
     """
     Download historical stock data from Alpha Vantage for a given symbol and ID.
     Prepares it for database insertion.
@@ -32,6 +33,7 @@ def download(symbol, id, oldest:str) -> DataFrame:
     dataframe.dropna(inplace=True)
 
     # Find the column and drop earlier ones
+    dataframe.sort_index(inplace=True)
     dataframe = dataframe.loc[oldest:]
 
     dataframe.reset_index(inplace=True)
@@ -39,9 +41,10 @@ def download(symbol, id, oldest:str) -> DataFrame:
     dataframe.columns = ["timestamp", "open", "high", "close", "low", "volume"]
     dataframe["stock_id"] = id
     dataframe = dataframe.astype({"volume":"int"})
-
+    dataframe["timestamp"] = dataframe["timestamp"].apply(lambda dt: dt.strftime("%Y-%m-%d"))
+    
     lastValue = dataframe["timestamp"][0]
-    return dataframe
+    return dataframe, lastValue
 
 # def downloadToday(symbols, id):
 #     ts = TimeSeries(key="WBWQASL71SX0NAZ7", output_format="pandas", indexing_type="integer")

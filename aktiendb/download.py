@@ -1,7 +1,8 @@
+from typing import Tuple
 from pandas import DataFrame
 import yfinance as yf
 
-def downloadStocks(symbol, id, start:str=None, end:str=None, period="1y") -> DataFrame:
+def download(symbol, id, start:str=None, end:str=None, period="1y") ->Tuple[DataFrame, str]:
     ticker = yf.Ticker(symbol)
     dataframe = (ticker.history(period=period, start=start, end=end)
                  .dropna()
@@ -10,7 +11,7 @@ def downloadStocks(symbol, id, start:str=None, end:str=None, period="1y") -> Dat
     
     if dataframe.empty:
         print(f"No data found: period={period}, Stock={symbol} with ID={id}")
-        return dataframe
+        return dataframe, None
     
     columnsToKeep = ["Date", "Ticker", "Close", "High", "Low", "Open", "Volume"]
     
@@ -22,4 +23,5 @@ def downloadStocks(symbol, id, start:str=None, end:str=None, period="1y") -> Dat
     dataframe["stock_id"] = id
     dataframe["timestamp"] = dataframe["timestamp"].apply(lambda dt: dt.strftime("%Y-%m-%d"))
     dataframe = dataframe.astype({"volume":"int"})
-    return dataframe
+    lastValue = dataframe["timestamp"].iloc[-1]
+    return dataframe, lastValue
