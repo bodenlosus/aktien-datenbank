@@ -5,6 +5,11 @@
 .direnv
 __pycache__
 logs/*
+.egg-info
+dist/*
+lib/*
+result
+.cache
 *.egg-info
 dist/*
 lib/*
