@@ -2,7 +2,7 @@ import sys
 import time
 
 from .database.depots import updateDepotValues
-from .download import downloadStocks
+from .downloadAlphaVantage import download
 from dotenv import dotenv_values
 from supabase import Client
 import yfinance as yf
@@ -63,9 +63,9 @@ def updateStocks(supabase):
     for id, symbol in stockInfos:
         print("Downloading stock data for", symbol, id, sep=" ")
         
-        period = record.getUpdatePeriod(id)
+        lastUpdate = record.getLastUpdateTimestamp(id)
 
-        dataframe = downloadStocks(symbol=symbol, id=id, period=period)
+        dataframe = download(symbol=symbol, id=id, oldest=lastUpdate)
         time.sleep(0.1)
         if dataframe.empty:
             continue

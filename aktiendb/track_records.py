@@ -1,18 +1,23 @@
 from typing import Union
 import numpy as np
-import time
+from datetime import datetime, timedelta
+import dateutil
 
 
 class TrackRecord:
     def __init__(self, file_path):
         self.file_path = file_path
         self.record = dict()
+        self.dateFormat = "%Y-%m-%d"
 
-    def updateRecord(self, stock_ids: list[int]):
-        currentTime: str = time.strftime("%Y-%m-%d_%H:%M:%S", time.gmtime())
-
+    def updateRecord(self, stock_ids: list[int], timestamp:str=None):
+        if not timestamp:
+            today = self
+            date4YearsAgo = today - timedelta(days=365 * 4)
+            timestamp = date4YearsAgo.strftime(self.dateFormat)
+        
         for id in stock_ids:
-            self.record[id] = currentTime
+            self.record[id] = timestamp
 
         self.saveRecord()
 
@@ -29,18 +34,18 @@ class TrackRecord:
         
         return self.record
 
-    def getDaysSinceLastUpdate(self, timestamp) -> int:
-            currentTime = time.mktime(time.gmtime())
-            updateTime = time.mktime(time.strptime(timestamp, "%Y-%m-%d_%H:%M:%S"))
+    def getDaysSinceLastUpdate(self, timestamp:str) -> int:
+            currentDate = datetime.now()
+            updateDate = datetime.strptime(timestamp, self.dateFormat)
+            
+            diff = currentDate - updateDate
 
-            timeSinceUpdate = (currentTime - updateTime) / (60 * 60 * 24)
-
-            daysSinceUpdate = int(np.ceil(timeSinceUpdate))
+            daysSinceUpdate = diff.days
 
             return daysSinceUpdate
     
     def getLastUpdateTimestamp(self, id) -> str:
-        defaultTimestamp = time.strftime("%Y-%m-%d", time.gmtime(0))
+        defaultTimestamp = self.getCurrentDate().strptime
         timestamp = self.record.get(id, defaultTimestamp)
         
         return timestamp
@@ -53,8 +58,8 @@ class TrackRecord:
         return timestamp, period
     
     def getCurrentDate(self):
-        currentTime = time.strftime("%Y-%m-%d", time.gmtime())
-        return currentTime
+        currentDate = datetime.now()
+        return currentDate
 
     def getUpdatePeriod(self, id) -> str:
         possibleIntervals = {
