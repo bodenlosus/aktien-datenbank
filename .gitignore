@@ -1,22 +1,26 @@
-.env
-.venv
-.vscode
-.vscode/*
-.direnv
-__pycache__
-logs/*
-.egg-info
-dist/*
-lib/*
-result
-.cache
-*.egg-info
-dist/*
-lib/*
-result
-.cache
-build/*
+# Python-related files
+*.py[cod]
+__pycache__/
+*.egg-info/
+dist/
+build/
+lib/
+lib64/
+.venv/
+.direnv/
+
+# Editor and IDE specific files
+.vscode/
 .code-workspace
+
+# Logs and cache files
+logs/
+.cache/
+
+# Temporary or system-generated files
 *.dat
 =*
+result
 
+# secrets
+.env
