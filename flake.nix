@@ -32,6 +32,7 @@
             yfinance
             python-dotenv
             schedule
+            alpha-vantage
           ];
         };
 
@@ -57,6 +58,7 @@
             yfinance
             python-dotenv
             schedule
+            alpha-vantage
             venvShellHook
           ];
           inputsFrom = [ editablePkg ];
