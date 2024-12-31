@@ -1,0 +1,1 @@
+sudo pip install storage3==0.10.0 propcache==0.2.0 multidict==6.0.5 frozenlist==1.4.1 attrs==24.2.0 .
