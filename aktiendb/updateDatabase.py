@@ -42,7 +42,7 @@ def updateDepots(supabase):
         end=dRecord.toTimestamp(end),
     )
     
-    dRecord.updateRecord([0,])
+    dRecord.updateRecord([0,], end)
     
     dRecord.saveRecord()
 

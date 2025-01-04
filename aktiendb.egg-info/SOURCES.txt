@@ -1,6 +1,7 @@
 pyproject.toml
 aktiendb/__init__.py
 aktiendb/download.py
+aktiendb/downloadAlphaVantage.py
 aktiendb/generateCSV.py
 aktiendb/main.py
 aktiendb/track_records.py
@@ -13,5 +14,6 @@ aktiendb.egg-info/requires.txt
 aktiendb.egg-info/top_level.txt
 aktiendb/database/__init__.py
 aktiendb/database/client.py
+aktiendb/database/depots.py
 aktiendb/database/insert_prices.py
 aktiendb/database/stock_info.py

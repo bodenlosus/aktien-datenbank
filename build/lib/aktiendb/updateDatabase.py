@@ -1,6 +1,8 @@
 import sys
 import time
-from .download import downloadStocks
+
+from .database.depots import updateDepotValues
+from .download import download
 from dotenv import dotenv_values
 from supabase import Client
 import yfinance as yf
@@ -22,6 +24,29 @@ def update():
     
     supabase: Client = createSupabaseClient(timeout=30, url=url, key=key)
     
+    updateStocks(supabase)
+    updateDepots(supabase)
+    
+def updateDepots(supabase):
+    dRecord_file = pathlib.Path("./depot_record.dat")
+    dRecord_file.touch(exist_ok=True)
+    
+    dRecord = TrackRecord(dRecord_file)
+    dRecord.readRecord()
+    start = dRecord.getLastUpdateDate(0)
+    end = dRecord.getCurrentDate()
+    
+    updateDepotValues(
+        supabase, 
+        start=dRecord.toTimestamp(start), 
+        end=dRecord.toTimestamp(end),
+    )
+    
+    dRecord.updateRecord([0,])
+    
+    dRecord.saveRecord()
+
+def updateStocks(supabase):
     stockInfos = getStockInfo(supabase, keys=("id", "symbol"))
     
     q = queue.Queue()
@@ -38,19 +63,27 @@ def update():
     for id, symbol in stockInfos:
         print("Downloading stock data for", symbol, id, sep=" ")
         
-        period = record.getUpdatePeriod(id)
+        lastUpdate = record.getLastUpdateDate(id)
 
-        dataframe = downloadStocks(symbol=symbol, id=id, period=period)
+        dataframe, lastUpdateTS = download(
+            symbol=symbol, 
+            id=id, 
+            start=record.toTimestamp(lastUpdate)
+            )
+        
         time.sleep(0.1)
         if dataframe.empty:
             continue
         
         q.put((dataframe, dataframe.shape[0]))
+        
+        record.updateRecord([id,], record.parseTimestamp(lastUpdateTS))
+    
+    record.saveRecord()
     
     q.put((None, None))
     
     worker.join()
-
 def getSecrets():
     config = dotenv_values(".env")
     url = config.get("SUPABASE_URL")

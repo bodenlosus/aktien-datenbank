@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: aktiendb
-Version: 0.3
+Version: 0.31
 Requires-Dist: pandas
 Requires-Dist: yfinance
 Requires-Dist: supabase
