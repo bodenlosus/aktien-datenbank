@@ -2,8 +2,8 @@ name: Update Database
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "0 0 * * *" # Runs daily at midnight
+  # schedule:
+  #   - cron: "0 0 * * *" # Runs daily at midnight
 
 jobs:
   build:
