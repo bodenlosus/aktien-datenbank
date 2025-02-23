@@ -12,6 +12,7 @@
         pkgs = import nixpkgs { inherit system; };
         python3 = pkgs.python3;
         supabase = inputs.sb-py.packages.${system}.default;
+        yf = python3.pkgs.callPackage ./packages/yf.nix {};
 
         pyproject = builtins.fromTOML (builtins.readFile ./pyproject.toml);
 
@@ -29,10 +30,9 @@
             supabase
             numpy
             pandas
-            yfinance
+            yf
             python-dotenv
             schedule
-            alpha-vantage
           ];
         };
 
@@ -55,7 +55,7 @@
             supabase
             numpy
             pandas
-            yfinance
+            yf
             python-dotenv
             schedule
             alpha-vantage
